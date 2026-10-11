@@ -1,6 +1,8 @@
 # XCaptions
 
-Free, browser-based AI subtitle generator. A CapCut-style auto-caption tool with word-timed captions, animated styles and Urdu support. No account needed.
+XCaptions is a free CapCut-style auto-caption tool that runs in your browser. Drop a video, get word-timed subtitles, pick an animated style, edit, translate and export. No account, no watermark. Your video never leaves your device; only the extracted audio is sent for transcription.
+
+Built for creators who need Urdu, Roman Urdu, Hindi and English captions, with 9:16 reframing for Reels and Shorts, and SRT/VTT/TXT/video export.
 
 Live: https://xcaptions.studio
 
