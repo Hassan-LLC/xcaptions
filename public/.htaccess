@@ -1,0 +1,85 @@
+Options -Indexes
+
+# Unknown URLs get the custom 404 page. There is no catch-all SPA rewrite any
+# more: only the editor route falls back to a client-side app shell.
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !^/.well-known(?:/|$) [NC]
+  RewriteCond %{REQUEST_URI} (?:^|/)\.[^/]+ [NC]
+  RewriteRule ^ - [F,L]
+
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # The editor is one client-side route. Normalise the trailing slash so the
+  # relative asset and API URLs inside the app resolve against the site root.
+  RewriteRule ^app/$ app [R=301,L]
+  RewriteRule ^app$ app.html [END]
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/wasm .wasm
+  AddType font/woff2 .woff2
+  AddType text/javascript .js .mjs
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml .svg
+  AddType image/x-icon .ico
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Vary "Accept-Encoding"
+  Header always set X-Frame-Options "DENY"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' blob: 'wasm-unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com; media-src 'self' blob: data:; connect-src 'self' blob: https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+  # NOTE: cache headers do not change file hashes. Vite derives a filename from
+  # file CONTENT only, so a header/CSP change keeps the same hashed name. Never
+  # mark immutable a file whose own headers (CSP, etc.) matter — the ffmpeg
+  # worker gets its CSP from its own response, so it must revalidate.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # ffmpeg/ core files are fetched via toBlobURL(); revalidate so a core upgrade
+  # is picked up without a hard refresh.
+  <FilesMatch "^ffmpeg-core\.(js|wasm)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # Hashed assets are immutable EXCEPT the ffmpeg worker (worker-*.js).
+  <FilesMatch "^(?!worker-)[A-Za-z0-9_.-]*[-.][A-Za-z0-9_-]{8,}\.(css|js|mjs|wasm|woff2|png|jpg|svg|mp4)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^worker-.*\.js$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # version.json must never be cached (browser or CDN) or stale deployments are
+  # never detected.
+  <FilesMatch "^version\.json$">
+    Header set Cache-Control "no-store"
+  </FilesMatch>
+  <FilesMatch "^(robots\.txt|sitemap\.xml|llms\.txt|manifest\.webmanifest|favicon\.ico|favicon\.svg|apple-touch-icon\.png|icon-192\.png|icon-512\.png|maskable-512\.png|social-preview\.png)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/manifest+json image/svg+xml
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/javascript application/javascript application/json application/manifest+json image/svg+xml
+</IfModule>
+
+<IfModule mod_authz_core.c>
+  <FilesMatch "(^\.|(^|/)(config|config\.example)\.php$|\.log$|^rate-limit.*\.json$|^\.env)">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  <FilesMatch "(^\.|(^|/)(config|config\.example)\.php$|\.log$|^rate-limit.*\.json$|^\.env)">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>

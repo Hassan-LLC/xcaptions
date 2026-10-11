@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="XCaptions">
+  <title>XCaptions</title>
+  <defs>
+    <mask id="xc-notch">
+      <rect width="64" height="64" fill="#fff"/>
+      <path d="M25 23 25 41 39 32Z" fill="#000"/>
+    </mask>
+  </defs>
+  <g mask="url(#xc-notch)">
+    <rect x="9" y="27" width="46" height="10" rx="5" fill="currentColor" transform="rotate(45 32 32)"/>
+    <rect x="13" y="26.5" width="38" height="11" rx="5.5" fill="currentColor" transform="rotate(-45 32 32)"/>
+  </g>
+</svg>

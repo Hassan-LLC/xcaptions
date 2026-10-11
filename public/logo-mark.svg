@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="XCaptions">
+  <title>XCaptions</title>
+  <rect width="64" height="64" rx="15" fill="#111210"/>
+  <rect x="9" y="27" width="46" height="10" rx="5" fill="#d1fa70" transform="rotate(45 32 32)"/>
+  <rect x="13" y="26.5" width="38" height="11" rx="5.5" fill="#ff846b" transform="rotate(-45 32 32)"/>
+  <path d="M25 23 25 41 39 32Z" fill="#111210"/>
+</svg>

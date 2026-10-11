@@ -1,0 +1,5 @@
+This folder contains the single-threaded ESM core from @ffmpeg/core 0.12.10.
+
+The @ffmpeg/core package declares its license as GPL-2.0-or-later.
+Upstream project and source: https://github.com/ffmpegwasm/ffmpeg.wasm
+Review the applicable license obligations before distributing this application.
