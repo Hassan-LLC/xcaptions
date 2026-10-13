@@ -1,0 +1,94 @@
+{
+  "checks": [
+    {
+      "name": "original ratio keeps source output size",
+      "pass": true,
+      "detail": "1280 × 720"
+    },
+    {
+      "name": "original ratio preview aspect is 16:9",
+      "pass": true,
+      "detail": "1.7763"
+    },
+    {
+      "name": "9:16 output is 720x1280 (short side capped at source)",
+      "pass": true,
+      "detail": "720 × 1280"
+    },
+    {
+      "name": "9:16 preview aspect is 9:16",
+      "pass": true,
+      "detail": "0.5628"
+    },
+    {
+      "name": "landscape to 9:16 defaults to Fit + blur",
+      "pass": true,
+      "detail": "Fit + blur"
+    },
+    {
+      "name": "blur backdrop is not the solid-color black",
+      "pass": true,
+      "detail": "[44,16,15]"
+    },
+    {
+      "name": "solid color backdrop fills the empty area with the chosen color",
+      "pass": true,
+      "detail": "[12,14,12]"
+    },
+    {
+      "name": "blur and color backdrops render differently",
+      "pass": true,
+      "detail": "[44,16,15] vs [12,14,12]"
+    },
+    {
+      "name": "social safe area toggle turns on",
+      "pass": true,
+      "detail": "checked"
+    },
+    {
+      "name": "dragging on the canvas updates crop focus",
+      "pass": true,
+      "detail": "[\"20%\",\"25%\",\"1.00×\"]"
+    },
+    {
+      "name": "1:1 output is 720x720",
+      "pass": true,
+      "detail": "720 × 720"
+    },
+    {
+      "name": "1:1 preview aspect is 1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "16:9 output is 1280x720",
+      "pass": true,
+      "detail": "1280 × 720"
+    },
+    {
+      "name": "4:5 at 480p output is 480x600",
+      "pass": true,
+      "detail": "480 × 600"
+    },
+    {
+      "name": "captions were generated",
+      "pass": true,
+      "detail": "4"
+    },
+    {
+      "name": "caption text and timings unchanged by ratio changes",
+      "pass": true,
+      "detail": "4 rows"
+    },
+    {
+      "name": "export panel shows real 9:16 480p dimensions",
+      "pass": true,
+      "detail": "480 × 854"
+    }
+  ],
+  "pageErrors": [
+    "HTTP 404 http://127.0.0.1:5199/favicon.ico",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "consoleLogs": []
+}

@@ -374,7 +374,7 @@ if (!requestIsAllowed($config)) {
 
 if (isset($_POST['language'])) {
     $language = $_POST['language'];
-    if (!is_string($language) || !in_array($language, ['auto', 'ur', 'hi', 'en', 'ar'], true)) {
+    if (!is_string($language) || !in_array($language, ['auto', 'ur', 'hi', 'en', 'ar', 'fa', 'tr', 'es', 'fr', 'he'], true)) {
         respond(400, 'The selected language is not supported.');
     }
 } else {

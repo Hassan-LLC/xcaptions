@@ -1,0 +1,595 @@
+{
+  "checks": [
+    {
+      "name": "/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "49: XCaptions: Free AI Auto Subtitles in Your Browser"
+    },
+    {
+      "name": "/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "151"
+    },
+    {
+      "name": "/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/"
+    },
+    {
+      "name": "/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/ JSON-LD includes Organization",
+      "pass": true,
+      "detail": "Organization, WebSite, SoftwareApplication"
+    },
+    {
+      "name": "/ JSON-LD includes WebSite",
+      "pass": true,
+      "detail": "Organization, WebSite, SoftwareApplication"
+    },
+    {
+      "name": "/ JSON-LD includes SoftwareApplication",
+      "pass": true,
+      "detail": "Organization, WebSite, SoftwareApplication"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "47: Urdu Subtitle Generator — Urdu &amp; Roman Urdu"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "143"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/urdu-subtitle-generator/"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/urdu-subtitle-generator/ JSON-LD includes FAQPage",
+      "pass": true,
+      "detail": "FAQPage, BreadcrumbList"
+    },
+    {
+      "name": "/urdu-subtitle-generator/ JSON-LD includes BreadcrumbList",
+      "pass": true,
+      "detail": "FAQPage, BreadcrumbList"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "55: Automatic Subtitles for Videos — English, Hindi, Arabic"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "147"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/auto-subtitles-for-videos/"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ JSON-LD includes FAQPage",
+      "pass": true,
+      "detail": "FAQPage, BreadcrumbList"
+    },
+    {
+      "name": "/auto-subtitles-for-videos/ JSON-LD includes BreadcrumbList",
+      "pass": true,
+      "detail": "FAQPage, BreadcrumbList"
+    },
+    {
+      "name": "/how-it-works/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/how-it-works/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "19: How XCaptions Works"
+    },
+    {
+      "name": "/how-it-works/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "143"
+    },
+    {
+      "name": "/how-it-works/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/how-it-works/"
+    },
+    {
+      "name": "/how-it-works/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/how-it-works/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/how-it-works/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/how-it-works/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/how-it-works/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/how-it-works/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/how-it-works/ JSON-LD includes HowTo",
+      "pass": true,
+      "detail": "HowTo, BreadcrumbList"
+    },
+    {
+      "name": "/how-it-works/ JSON-LD includes BreadcrumbList",
+      "pass": true,
+      "detail": "HowTo, BreadcrumbList"
+    },
+    {
+      "name": "/faq/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/faq/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "42: XCaptions FAQ — Limits, Privacy and Export"
+    },
+    {
+      "name": "/faq/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "125"
+    },
+    {
+      "name": "/faq/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/faq/"
+    },
+    {
+      "name": "/faq/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/faq/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/faq/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/faq/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/faq/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/faq/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/faq/ JSON-LD includes FAQPage",
+      "pass": true,
+      "detail": "FAQPage, BreadcrumbList"
+    },
+    {
+      "name": "/faq/ JSON-LD includes BreadcrumbList",
+      "pass": true,
+      "detail": "FAQPage, BreadcrumbList"
+    },
+    {
+      "name": "/privacy/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/privacy/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "19: Privacy — XCaptions"
+    },
+    {
+      "name": "/privacy/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "124"
+    },
+    {
+      "name": "/privacy/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/privacy/"
+    },
+    {
+      "name": "/privacy/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/privacy/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/privacy/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/privacy/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/privacy/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/privacy/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/privacy/ JSON-LD includes BreadcrumbList",
+      "pass": true,
+      "detail": "BreadcrumbList"
+    },
+    {
+      "name": "/terms/ returns 200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "/terms/ title present and <= 60 chars",
+      "pass": true,
+      "detail": "28: Terms and Limits — XCaptions"
+    },
+    {
+      "name": "/terms/ description present and <= 155 chars",
+      "pass": true,
+      "detail": "136"
+    },
+    {
+      "name": "/terms/ has a canonical URL",
+      "pass": true,
+      "detail": "https://xcaptions.studio/terms/"
+    },
+    {
+      "name": "/terms/ has Open Graph title/description/image",
+      "pass": true,
+      "detail": "https://xcaptions.studio/social-preview.png"
+    },
+    {
+      "name": "/terms/ has a Twitter card and image",
+      "pass": true,
+      "detail": "summary_large_image"
+    },
+    {
+      "name": "/terms/ html lang is set",
+      "pass": true,
+      "detail": "en"
+    },
+    {
+      "name": "/terms/ has a viewport meta",
+      "pass": true,
+      "detail": "width=device-width, initial-scale=1"
+    },
+    {
+      "name": "/terms/ has exactly one H1",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "/terms/ JSON-LD parses",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "/terms/ JSON-LD includes BreadcrumbList",
+      "pass": true,
+      "detail": "BreadcrumbList"
+    },
+    {
+      "name": "robots.txt allows crawling and links the sitemap",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "robots.txt disallows /api/",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "sitemap.xml lists the pages with lastmod",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "sitemap.xml includes /",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "sitemap.xml includes /urdu-subtitle-generator/",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "sitemap.xml includes /auto-subtitles-for-videos/",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "sitemap.xml includes /how-it-works/",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "sitemap.xml includes /faq/",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "sitemap.xml includes /privacy/",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "sitemap.xml includes /terms/",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "llms.txt describes the site and its pages",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "manifest has a name and icons",
+      "pass": true,
+      "detail": "application/manifest+json; charset=utf-8"
+    },
+    {
+      "name": "unknown URLs return the custom 404 with a 404 status",
+      "pass": true,
+      "detail": "404"
+    },
+    {
+      "name": "/app serves the editor shell",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link / resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /urdu-subtitle-generator/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /auto-subtitles-for-videos/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /how-it-works/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /faq/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /app resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /privacy/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /terms/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /free-capcut-alternative-for-subtitles/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /best-free-urdu-subtitle-generator/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "internal link /xcaptions-vs-capcut/ resolves",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "browser renders home with an H1",
+      "pass": true,
+      "detail": "Free AI auto subtitles for any video."
+    },
+    {
+      "name": "browser renders faq with an H1",
+      "pass": true,
+      "detail": "Frequently asked questions"
+    },
+    {
+      "name": "browser renders urdu with an H1",
+      "pass": true,
+      "detail": "Urdu and Roman Urdu subtitle generator"
+    },
+    {
+      "name": "test clip loads into the editor",
+      "pass": true,
+      "detail": "{\"ok\":true,\"size\":737423}"
+    },
+    {
+      "name": "captions are generated from the API",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "name": "export button is available",
+      "pass": true,
+      "detail": "{\"text\":\"Export video\",\"disabled\":false}"
+    },
+    {
+      "name": "captioned video export completes",
+      "pass": true,
+      "detail": "ok"
+    },
+    {
+      "name": "an exported video file was downloaded",
+      "pass": true,
+      "detail": "subtitled-video.mp4"
+    },
+    {
+      "name": "exported file is a real MP4",
+      "pass": true,
+      "detail": "401164 bytes"
+    },
+    {
+      "name": "no browser errors across the run",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "pageErrors": []
+}

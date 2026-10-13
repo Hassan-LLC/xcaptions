@@ -7,7 +7,7 @@ import templates from './templates/templates.json'
 import type { SubtitleStyleOverrides, SubtitleTemplate } from './templates/types'
 import { formatClock, LONG_VIDEO_WARNING_SECONDS, LOW_MEMORY_DEVICE_GB, MAX_FILE_HARD_MB, MAX_VIDEO_MB, MAX_VIDEO_MINUTES, MAX_VIDEO_SECONDS, RECOMMENDED_LONG_EXPORT_RESOLUTION, estimateExportSeconds } from './config/limits'
 import { extractOriginalQualityWav, extractWav, trimOriginalQualityWav, type AudioExtractionProgress } from './lib/audio'
-import { mergeChunkWords, splitTranscriptionChunks, transcribeChunk, type TranscriptionChunk } from './lib/transcribe'
+import { isRtlLanguage, languageLabelFor, mergeChunkWords, splitTranscriptionChunks, transcribeChunk, transcriptionLanguageOptions, type TranscriptionChunk } from './lib/transcribe'
 import { setBusy } from './lib/version'
 import { chunkWords, type SubtitleLine, type Word } from './lib/chunker'
 import { CaptionList } from './components/CaptionList'
@@ -132,6 +132,9 @@ export default function App() {
   const workspaceTabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const captionsScrollRef = useRef<HTMLDivElement>(null)
   const [transcribeState, setTranscribeState] = useState<'idle' | 'extracting' | 'fallback' | 'transcribing' | 'done' | 'error'>('idle')
+  const [transcribeLanguage, setTranscribeLanguage] = useState<string>('auto')
+  const [detectedLanguage, setDetectedLanguage] = useState<string | null>(null)
+  const [generatedLanguage, setGeneratedLanguage] = useState<string | null>(null)
   const [audioProgress, setAudioProgress] = useState<AudioExtractionProgress | null>(null)
   const [transcribeError, setTranscribeError] = useState('')
   const [textExportFormat, setTextExportFormat] = useState<TextExportFormat>('paragraphs')
@@ -170,7 +173,7 @@ export default function App() {
   const saveTimerRef = useRef<number | null>(null)
   const saveQueueRef = useRef<Promise<void>>(Promise.resolve())
   const saveNowRef = useRef<() => void>(() => {})
-  const transcriptionRef = useRef<{ chunks: TranscriptionChunk[]; perChunk: Word[][]; controller: AbortController; timeOffset: number } | null>(null)
+  const transcriptionRef = useRef<{ chunks: TranscriptionChunk[]; perChunk: Word[][]; controller: AbortController; timeOffset: number; language: string | null } | null>(null)
 
   activeProjectIdRef.current = activeProjectId
   currentFileRef.current = file
@@ -414,6 +417,9 @@ export default function App() {
     setSelectedId(null)
     setTranscribeState('idle')
     setTranscribeError('')
+    setTranscribeLanguage('auto')
+    setDetectedLanguage(null)
+    setGeneratedLanguage(null)
     setTranslationState('idle')
     setTranslationProgress(null)
     setTranslationError('')
@@ -493,6 +499,10 @@ export default function App() {
       setSubtitleDownloadFormat(project.subtitleDownloadFormat)
       setTextExportFormat(project.textExportFormat)
       setTranscribeState(project.lines.length > 0 ? 'done' : 'idle')
+      setTranscribeError('')
+      setTranscribeLanguage('auto')
+      setDetectedLanguage(null)
+      setGeneratedLanguage('auto')
       setAudioProgress(null)
       setAudioDownloadState('idle')
       setAudioDownloadError('')
@@ -690,6 +700,9 @@ export default function App() {
     setSelectedId(null)
     setTranscribeState('idle')
     setTranscribeError('')
+    setTranscribeLanguage('auto')
+    setDetectedLanguage(null)
+    setGeneratedLanguage(null)
     setTranslationState('idle')
     setTranslationProgress(null)
     setTranslationError('')
@@ -776,6 +789,9 @@ export default function App() {
           setShowTranslated(false)
           setTranscribeState('idle')
           setTranscribeError('')
+          setTranscribeLanguage('auto')
+          setDetectedLanguage(null)
+          setGeneratedLanguage(null)
           setAudioProgress(null)
           setTranscribeParts(null)
           setTranscribeFailedPart(null)
@@ -828,6 +844,10 @@ export default function App() {
     setLines([])
     setSelectedId(null)
     setTranscribeState('idle')
+    setTranscribeError('')
+    setTranscribeLanguage('auto')
+    setDetectedLanguage(null)
+    setGeneratedLanguage(null)
     setAudioDownloadState('idle')
     setAudioDownloadError('')
     setAudioDownloadSize(0)
@@ -838,10 +858,18 @@ export default function App() {
     if (!session) return
     const { chunks, perChunk, controller, timeOffset } = session
     let current = startIndex
+    // In auto mode the language is detected from the first chunk and reused for
+    // every later chunk. An explicit selection is sent for all chunks unchanged.
+    let resolvedLanguage: string | null = session.language ?? (transcribeLanguage === 'auto' ? null : transcribeLanguage)
     try {
       for (; current < chunks.length; current++) {
         setTranscribeParts({ done: current, total: chunks.length })
-        perChunk[current] = await transcribeChunk(chunks[current], controller.signal)
+        const result = await transcribeChunk(chunks[current], resolvedLanguage ?? undefined, controller.signal)
+        if (resolvedLanguage === null && result.language) {
+          resolvedLanguage = result.language
+          session.language = result.language
+        }
+        perChunk[current] = result.words
       }
       const merged = mergeChunkWords(chunks, perChunk)
       const newLines = chunkWords(merged.map((word) => ({
@@ -853,6 +881,7 @@ export default function App() {
       setTranslationTarget('roman-ur')
       setShowTranslated(false)
       setTranslationError('')
+      setDetectedLanguage(resolvedLanguage)
       setAudioProgress(null)
       setTranscribeParts(null)
       setTranscribeFailedPart(null)
@@ -889,6 +918,8 @@ export default function App() {
       setAudioProgress(null)
       setTranscribeParts(null)
       setTranscribeFailedPart(null)
+      setDetectedLanguage(null)
+      setGeneratedLanguage(transcribeLanguage)
       setTranscribeState('extracting')
       const wav = cutProvenance?.softLimit
         ? await extractRangeWav(file, trimRange.start, trimRange.end, undefined, (progress) => {
@@ -906,6 +937,7 @@ export default function App() {
         perChunk: new Array(chunks.length),
         controller: new AbortController(),
         timeOffset: cutProvenance?.softLimit ? trimRange.start : 0,
+        language: null,
       }
       setTranscribeParts({ done: 0, total: chunks.length })
       await runTranscription(0)
@@ -983,6 +1015,12 @@ export default function App() {
     if (showTranslated) selectCaptionVersion(false)
     setTranslationTarget(target)
     setTranslationError('')
+  }
+
+  const changeTranscribeLanguage = (language: string) => {
+    setTranscribeLanguage(language)
+    setDetectedLanguage(null)
+    setTranscribeError('')
   }
 
   const doTranslate = async () => {
@@ -1140,6 +1178,11 @@ export default function App() {
   const selectedLine = lines[selectedLineIndex]
   const translatedRtl = showTranslated && (translationTarget === 'ur' || translationTarget === 'ar')
   const translatedFont = translationTarget === 'ur' ? 'Noto Nastaliq Urdu' : 'Noto Naskh Arabic'
+  // Detected (or explicitly chosen) transcription language drives RTL rendering
+  // even before translation, reusing the existing Urdu Nastaliq font/styling.
+  const transcribeLanguageCode = transcribeLanguage === 'auto' ? detectedLanguage : transcribeLanguage
+  const transcribeRtl = isRtlLanguage(transcribeLanguageCode)
+  const transcribeRtlFont = 'Noto Nastaliq Urdu'
   const latinFallbackFont = styleOverrides.font && !['Noto Nastaliq Urdu', 'Noto Naskh Arabic'].includes(styleOverrides.font)
     ? styleOverrides.font
     : 'Poppins'
@@ -1149,10 +1192,15 @@ export default function App() {
       rtl: translatedRtl,
       font: translatedRtl ? translatedFont : template.rtl ? latinFallbackFont : template.font,
     }
-    : template
+    : transcribeRtl
+      ? { ...template, rtl: true, font: transcribeRtlFont }
+      : template
   const renderOverrides = showTranslated
     ? { ...styleOverrides, font: renderTemplate.font }
-    : styleOverrides
+    : transcribeRtl
+      ? { ...styleOverrides, font: transcribeRtlFont }
+      : styleOverrides
+  const captionRtl = showTranslated ? translatedRtl : transcribeRtl || template.rtl
   const updateStyleOverride = <K extends keyof SubtitleStyleOverrides,>(key: K, value: SubtitleStyleOverrides[K]) => {
     setStyleOverrides((previous) => ({ ...previous, [key]: value }))
   }
@@ -1339,6 +1387,8 @@ export default function App() {
   const includedCaptionCount = applyTrimToSubtitles
     ? trimSubtitleLines(lines, trimRange.start, trimRange.end).length
     : lines.length
+  const isTranscribing = transcribeState === 'extracting' || transcribeState === 'fallback' || transcribeState === 'transcribing'
+  const showGenerateButton = lines.length === 0 || transcribeLanguage !== generatedLanguage || isTranscribing
 
   return (
     <div className={`app-shell ${isExporting ? 'is-exporting' : ''}`}>
@@ -1754,22 +1804,38 @@ export default function App() {
                       <span>Captions, style and trim were restored. Choose the same file again to relink it.</span>
                     </div>
                   )}
-                  {!resumeChoiceRequired && file && lines.length === 0 && transcribeState !== 'done' && (
+                  {!resumeChoiceRequired && file && (
                     <div className="generate-control">
+                      <label className="transcribe-language">
+                        <span>Transcribe language</span>
+                        <select
+                          value={transcribeLanguage}
+                          onChange={(event) => changeTranscribeLanguage(event.currentTarget.value)}
+                          disabled={isExporting || isTranscribing}
+                        >
+                          <option value="auto">Auto-detect (recommended)</option>
+                          {transcriptionLanguageOptions.map((option) => (
+                            <option key={option.code} value={option.code}>{option.label}</option>
+                          ))}
+                        </select>
+                      </label>
+                      {transcribeState === 'done' && detectedLanguage && (
+                        <p className="detected-language" role="status">Detected: {languageLabelFor(detectedLanguage)}</p>
+                      )}
                       {transcribeState === 'error' && transcribeFailedPart !== null ? (
                         <button className="button button-generate" onClick={retryTranscription} disabled={isExporting}>
                           {`Retry part ${transcribeFailedPart + 1} of ${transcribeParts?.total ?? '?'}`}
                         </button>
-                      ) : (
+                      ) : showGenerateButton ? (
                         <button
                           className="button button-generate"
                           onClick={doTranscribe}
-                          disabled={isExporting || transcribeState === 'extracting' || transcribeState === 'fallback' || transcribeState === 'transcribing'}
+                          disabled={isExporting || isTranscribing}
                         >
-                          {transcribeState === 'idle' || transcribeState === 'error' ? 'Generate Subtitles' : 'Processing...'}
+                          {isTranscribing ? 'Processing...' : lines.length > 0 ? 'Regenerate Subtitles' : 'Generate Subtitles'}
                         </button>
-                      )}
-                      {(transcribeState === 'extracting' || transcribeState === 'fallback' || transcribeState === 'transcribing') && (
+                      ) : null}
+                      {isTranscribing && (
                         <button type="button" className="text-button" onClick={cancelTranscription}>Cancel</button>
                       )}
                       {transcribeState !== 'idle' && (
@@ -1798,8 +1864,8 @@ export default function App() {
                   {!resumeChoiceRequired && (
                     <CaptionList
                       lines={lines}
-                      rtl={showTranslated ? translatedRtl : template.rtl}
-                      fontFamily={showTranslated ? renderTemplate.font : styleOverrides.font ?? template.font}
+                      rtl={captionRtl}
+                      fontFamily={showTranslated ? renderTemplate.font : renderOverrides.font ?? template.font}
                       selectedId={selectedId}
                       currentTime={currentTime}
                       disabled={isExporting || translationState === 'translating'}
@@ -1810,8 +1876,8 @@ export default function App() {
                       editor={selectedLine ? (
                         <LineEditor
                           line={selectedLine}
-                          direction={showTranslated ? translatedRtl ? 'rtl' : 'ltr' : template.rtl ? 'rtl' : 'ltr'}
-                          fontFamily={showTranslated ? renderTemplate.font : styleOverrides.font ?? template.font}
+                          direction={captionRtl ? 'rtl' : 'ltr'}
+                          fontFamily={showTranslated ? renderTemplate.font : renderOverrides.font ?? template.font}
                           onChange={handleLineChange}
                           onDelete={() => handleDelete(selectedLine.id)}
                           onSplit={() => handleSplit(selectedLine.id)}

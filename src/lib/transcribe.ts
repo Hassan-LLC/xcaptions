@@ -21,6 +21,52 @@ export type TranscriptionChunk = {
   blob: Blob
 }
 
+/** Languages users can choose for transcription (plus Auto). Keep the codes in
+ * sync with the whitelist in `public/api/transcribe.php`. */
+export type TranscriptionLanguageOption = { code: string; label: string }
+
+export const transcriptionLanguageOptions: TranscriptionLanguageOption[] = [
+  { code: 'ur', label: 'Urdu' },
+  { code: 'ar', label: 'Arabic' },
+  { code: 'en', label: 'English' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'fa', label: 'Persian' },
+  { code: 'tr', label: 'Turkish' },
+  { code: 'es', label: 'Spanish' },
+  { code: 'fr', label: 'French' },
+]
+
+/** Groq's verbose_json `language` field is the full English language name. */
+const languageNameToCode: Record<string, string> = {
+  english: 'en',
+  urdu: 'ur',
+  arabic: 'ar',
+  hindi: 'hi',
+  persian: 'fa',
+  turkish: 'tr',
+  spanish: 'es',
+  french: 'fr',
+  hebrew: 'he',
+}
+
+/** Map a verbose_json language name to a code, or null when unrecognised. */
+function languageCodeFromName(name: unknown): string | null {
+  if (typeof name !== 'string') return null
+  return languageNameToCode[name.trim().toLowerCase()] ?? null
+}
+
+export function languageLabelFor(code: string | null): string | null {
+  if (!code) return null
+  const option = transcriptionLanguageOptions.find((item) => item.code === code)
+  if (option) return option.label
+  if (code === 'he') return 'Hebrew'
+  return null
+}
+
+export function isRtlLanguage(code: string | null): boolean {
+  return code === 'ar' || code === 'ur' || code === 'fa' || code === 'he'
+}
+
 type ParsedWav = {
   pcm: Float32Array
   sampleRate: number
@@ -209,10 +255,16 @@ function retryDelayMs(error: unknown, attempt: number): number | null {
   return null
 }
 
+/** Result of transcribing one chunk: its words plus the language Groq reported. */
+export type ChunkTranscriptionResult = { words: Word[]; language: string | null }
+
 /** Send one chunk and return its words in absolute (whole-clip) time. */
-async function transcribeChunkOnce(chunk: TranscriptionChunk, signal?: AbortSignal): Promise<Word[]> {
+async function transcribeChunkOnce(chunk: TranscriptionChunk, language?: string, signal?: AbortSignal): Promise<ChunkTranscriptionResult> {
   const formData = new FormData()
   formData.append('file', chunk.blob, 'audio.wav')
+  if (language && language !== 'auto') {
+    formData.append('language', language)
+  }
   if (import.meta.env.DEV) {
     formData.append('model', 'whisper-large-v3-turbo')
     formData.append('response_format', 'verbose_json')
@@ -233,7 +285,8 @@ async function transcribeChunkOnce(chunk: TranscriptionChunk, signal?: AbortSign
   }
   if (!response.ok) throw await readError(response)
 
-  const data = await response.json() as { words?: unknown }
+  const data = await response.json() as { words?: unknown; language?: unknown }
+  const detectedLanguage = languageCodeFromName(data.language)
   const words = Array.isArray(data.words)
     ? data.words.filter((word): word is Word => !!word
       && typeof word === 'object'
@@ -241,18 +294,21 @@ async function transcribeChunkOnce(chunk: TranscriptionChunk, signal?: AbortSign
       && Number.isFinite((word as Word).start)
       && Number.isFinite((word as Word).end))
     : []
-  return words.map((word) => ({
-    word: word.word,
-    start: word.start + chunk.start,
-    end: word.end + chunk.start,
-  }))
+  return {
+    words: words.map((word) => ({
+      word: word.word,
+      start: word.start + chunk.start,
+      end: word.end + chunk.start,
+    })),
+    language: detectedLanguage,
+  }
 }
 
 /** Send one chunk with up to {@link MAX_RETRIES} retries for transient failures. */
-export async function transcribeChunk(chunk: TranscriptionChunk, signal?: AbortSignal): Promise<Word[]> {
+export async function transcribeChunk(chunk: TranscriptionChunk, language?: string, signal?: AbortSignal): Promise<ChunkTranscriptionResult> {
   for (let attempt = 0; ; attempt++) {
     try {
-      return await transcribeChunkOnce(chunk, signal)
+      return await transcribeChunkOnce(chunk, language, signal)
     } catch (error) {
       if (signal?.aborted || isAbortError(error)) throw error
       if (attempt >= MAX_RETRIES) throw error
@@ -300,6 +356,6 @@ export function mergeChunkWords(chunks: TranscriptionChunk[], perChunk: Word[][]
 export async function transcribeAudio(wavBlob: Blob, signal?: AbortSignal): Promise<Word[]> {
   const chunks = await splitTranscriptionChunks(wavBlob)
   const perChunk: Word[][] = []
-  for (const chunk of chunks) perChunk.push(await transcribeChunk(chunk, signal))
+  for (const chunk of chunks) perChunk.push((await transcribeChunk(chunk, undefined, signal)).words)
   return mergeChunkWords(chunks, perChunk)
 }
